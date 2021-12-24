@@ -183,11 +183,11 @@ class Orders(SPAPI):
 
 	def get_orders(
 		self,
-		marketplace_ids:object,
 		created_after:str,
 		created_before:str=None,
 		last_updated_after:str=None,
 		last_updated_before:str=None,
+		marketplace_ids:object=None,
 		order_statuses:object=(),
 		fulfillment_channels:object=(),
 		payment_methods:object=(),
@@ -215,6 +215,9 @@ class Orders(SPAPI):
 			IsISPU=is_ispu,
 			StoreChainStoreId=store_chain_store_id
 		)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
 
 		data.update(self.enumerate_param("OrderStatus.Status.", order_statuses))
 		data.update(self.enumerate_param("MarketplaceId.Id.", marketplace_ids))
