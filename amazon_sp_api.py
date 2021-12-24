@@ -145,28 +145,6 @@ class SPAPI(object):
 			error.response = e.response
 			raise error
 
-	def enumerate_param(self, param:str, values:object) -> dict:
-		"""
-		Builds a dictionary of an enumerated parameter.
-		Takes any iterable and returns a dictionary.
-		ie.
-		enumerate_param('MarketplaceIdList.Id', (123, 345, 4343))
-		returns
-		{
-		        MarketplaceIdList.Id.1: 123,
-		        MarketplaceIdList.Id.2: 345,
-		        MarketplaceIdList.Id.3: 4343
-		}
-		"""
-		params = {}
-
-		if values:
-			if not param.endswith("."):
-				param = f"{param}."
-			for num, value in enumerate(values):
-				params[f"{param}{num + 1}"] = value
-
-		return params
 
 class Feeds(SPAPI):
 	pass
@@ -188,8 +166,8 @@ class Orders(SPAPI):
 		created_before:str=None,
 		last_updated_after:str=None,
 		last_updated_before:str=None,
-		marketplace_ids:object=None,
 		order_statuses:object=(),
+		marketplace_ids:object=None,
 		fulfillment_channels:object=(),
 		payment_methods:object=(),
 		buyer_email:str=None,
@@ -208,10 +186,16 @@ class Orders(SPAPI):
 			CreatedBefore=created_before,
 			LastUpdatedAfter=last_updated_after,
 			LastUpdatedBefore=last_updated_before,
+			OrderStatuses=order_statuses,
+			MarketplaceIds=marketplace_ids,
+			FulfillmentChannels=fulfillment_channels,
+			PaymentMethods=payment_methods,
 			BuyerEmail=buyer_email,
 			SellerOrderId=seller_order_id,
 			MaxResultsPerPage=max_results,
+			EasyShipShipmentStatuses=easyship_shipment_statuses,
 			NextToken=next_token,
+			AmazonOrderIds=amazon_order_ids,
 			ActualFulfillmentSupplySourceId=actual_fulfillment_supply_source_id,
 			IsISPU=is_ispu,
 			StoreChainStoreId=store_chain_store_id
@@ -219,13 +203,7 @@ class Orders(SPAPI):
 
 		if not marketplace_ids:
 			marketplace_ids = [self.marketplace_id]
-
-		data.update(self.enumerate_param("OrderStatus.Status.", order_statuses))
-		data.update(self.enumerate_param("MarketplaceId.Id.", marketplace_ids))
-		data.update(self.enumerate_param("FulfillmentChannel.Channel.", fulfillment_channels))
-		data.update(self.enumerate_param("PaymentMethod.Method.", payment_methods))
-		data.update(self.enumerate_param("EasyShipShipmentStatus.Status.", easyship_shipment_statuses))
-		data.update(self.enumerate_param("AmazonOrderId.Id.", amazon_order_ids))
+			data["MarketplaceIds"] = marketplace_ids
 
 		return self.make_request(data=data)
 
