@@ -177,7 +177,98 @@ class FBAInventory(SPAPI):
 	pass
 
 class Orders(SPAPI):
-	pass
+	""" Amazon Orders API """
+
+	BASE_URI = "/orders/v0/orders"
+
+	def get_orders(
+		self,
+		marketplace_ids:object,
+		created_after:str,
+		created_before:str=None,
+		last_updated_after:str=None,
+		last_updated_before:str=None,
+		order_statuses:object=(),
+		fulfillment_channels:object=(),
+		payment_methods:object=(),
+		buyer_email:str=None,
+		seller_order_id:str=None,
+		max_results:int=100,
+		easyship_shipment_statuses:object=None,
+		next_token:str=None,
+		amazon_order_ids:object=None,
+		actual_fulfillment_supply_source_id:str=None,
+		is_ispu:bool=False,
+		store_chain_store_id:str=None
+	) -> object:
+		""" Returns orders created or updated during the time frame indicated by the specified parameters. You can also apply a range of filtering criteria to narrow the list of orders returned. If NextToken is present, that will be used to retrieve the orders instead of other criteria. """
+		data = dict(
+			CreatedAfter=created_after,
+			CreatedBefore=created_before,
+			LastUpdatedAfter=last_updated_after,
+			LastUpdatedBefore=last_updated_before,
+			BuyerEmail=buyer_email,
+			SellerOrderId=seller_order_id,
+			MaxResultsPerPage=max_results,
+			NextToken=next_token,
+			ActualFulfillmentSupplySourceId=actual_fulfillment_supply_source_id,
+			IsISPU=is_ispu,
+			StoreChainStoreId=store_chain_store_id
+		)
+
+		data.update(self.enumerate_param("OrderStatus.Status.", order_statuses))
+		data.update(self.enumerate_param("MarketplaceId.Id.", marketplace_ids))
+		data.update(self.enumerate_param("FulfillmentChannel.Channel.", fulfillment_channels))
+		data.update(self.enumerate_param("PaymentMethod.Method.", payment_methods))
+		data.update(self.enumerate_param("EasyShipShipmentStatus.Status.", easyship_shipment_statuses))
+		data.update(self.enumerate_param("AmazonOrderId.Id.", amazon_order_ids))
+
+		return self.make_request(data=data)
+
+	def get_order(self, order_id:str) -> object:
+		""" Returns the order indicated by the specified order ID. """
+		append_to_base_uri = f"/{order_id}"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+	
+	def get_order_buyer_info(self, order_id:str) -> object:
+		""" Returns buyer information for the specified order. """
+		append_to_base_uri = f"/{order_id}/buyerInfo"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+
+	def get_order_address(self, order_id:str) -> object:
+		""" Returns the shipping address for the specified order. """
+		append_to_base_uri = f"/{order_id}/address"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+
+	def get_order_items(self, order_id:str, next_token:str=None) -> object:
+		""" Returns detailed order item information for the order indicated by the specified order ID. If NextToken is provided, it's used to retrieve the next page of order items. """
+		append_to_base_uri = f"/{order_id}/orderItems"
+		data = dict(
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, data=data)
+	
+	def get_order_items_buyer_info(self, order_id:str, next_token:str=None) -> object:
+		""" Returns buyer information for the order items in the specified order. """
+		append_to_base_uri = f"/{order_id}/orderItems/buyerInfo"
+		data = dict(
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, data=data)
+	
+	def update_shipment_status(self, order_id:str, marketplace_id:str, shipment_status:str, order_items:list[dict]) -> object:
+		""" Update the shipment status. """
+		if shipment_status not in ["ReadyForPickup", "PickedUp", "RefusedPickup"]:
+			raise SPAPIError(f"Invalid Shipment Status: {shipment_status}.")
+
+		append_to_base_uri = f"/{order_id}/shipment"
+		data = {
+			"marketplaceId": marketplace_id,
+			"shipmentStatus": shipment_status,
+			"orderItems": order_items
+		}
+
+		return self.make_request(append_to_base_uri=append_to_base_uri, data=data, method="POST")
 
 class ProductFees(SPAPI):
 	pass
