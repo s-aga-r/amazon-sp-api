@@ -134,6 +134,7 @@ class SPAPI(object):
 		return {"x-amz-access-token": self.get_access_token()}
 
 	def make_request(self, append_to_base_uri:str="", data:dict={}, method:str="GET") -> object:
+		data = Util.remove_empty(data)
 		url = self.endpoint + self.BASE_URI + append_to_base_uri
 
 		try:
@@ -308,3 +309,13 @@ class Util:
 			error_msg = f"Invalid Selling Region: {selling_region}"
 		
 		raise SPAPIError(error_msg)
+	
+	@staticmethod
+	def remove_empty(dict):
+		"""
+	        Helper function that removes all keys from a dictionary (dict), that have an empty value.
+		"""
+		for key in list(dict):
+			if not dict[key]:
+				del dict[key]
+		return dict
