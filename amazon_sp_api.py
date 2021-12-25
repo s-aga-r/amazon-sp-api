@@ -148,7 +148,11 @@ class SPAPI(object):
 			error = SPAPIError(str(e))
 			error.response = e.response
 			raise error
-
+		
+	def list_to_dict(self, key:str, values:list, data:dict) -> None:
+		if values and isinstance(values, list):
+			for idx in range(len(values)):
+				data[f"{key}[{idx}]"] = values[idx]
 
 class Feeds(SPAPI):
 	pass
@@ -190,20 +194,21 @@ class Orders(SPAPI):
 			CreatedBefore=created_before,
 			LastUpdatedAfter=last_updated_after,
 			LastUpdatedBefore=last_updated_before,
-			OrderStatuses=order_statuses,
-			MarketplaceIds=marketplace_ids,
-			FulfillmentChannels=fulfillment_channels,
-			PaymentMethods=payment_methods,
 			BuyerEmail=buyer_email,
 			SellerOrderId=seller_order_id,
 			MaxResultsPerPage=max_results,
-			EasyShipShipmentStatuses=easyship_shipment_statuses,
 			NextToken=next_token,
-			AmazonOrderIds=amazon_order_ids,
 			ActualFulfillmentSupplySourceId=actual_fulfillment_supply_source_id,
 			IsISPU=is_ispu,
 			StoreChainStoreId=store_chain_store_id
 		)
+
+		self.list_to_dict("OrderStatuses", order_statuses, data)
+		self.list_to_dict("MarketplaceIds", marketplace_ids, data)
+		self.list_to_dict("FulfillmentChannels", fulfillment_channels, data)
+		self.list_to_dict("PaymentMethods", payment_methods, data)
+		self.list_to_dict("EasyShipShipmentStatuses", easyship_shipment_statuses, data)
+		self.list_to_dict("AmazonOrderIds", amazon_order_ids, data)
 
 		if not marketplace_ids:
 			marketplace_ids = [self.marketplace_id]
