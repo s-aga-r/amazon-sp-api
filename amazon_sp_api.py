@@ -138,7 +138,7 @@ class SPAPI(object):
 			params = Util.remove_empty(params)
 		if isinstance(data, dict):
 			data = Util.remove_empty(data)
-			
+
 		url = self.endpoint + self.BASE_URI + append_to_base_uri
 
 		try:
@@ -167,22 +167,22 @@ class Orders(SPAPI):
 	def get_orders(
 		self,
 		created_after:str,
-		created_before:str=None,
-		last_updated_after:str=None,
-		last_updated_before:str=None,
-		order_statuses:object=(),
-		marketplace_ids:object=None,
-		fulfillment_channels:object=(),
-		payment_methods:object=(),
-		buyer_email:str=None,
-		seller_order_id:str=None,
+		created_before:str|None=None,
+		last_updated_after:str|None=None,
+		last_updated_before:str|None=None,
+		order_statuses:list=[],
+		marketplace_ids:list|None=None,
+		fulfillment_channels:list=[],
+		payment_methods:object=[],
+		buyer_email:str|None=None,
+		seller_order_id:str|None=None,
 		max_results:int=100,
-		easyship_shipment_statuses:object=None,
-		next_token:str=None,
-		amazon_order_ids:object=None,
-		actual_fulfillment_supply_source_id:str=None,
+		easyship_shipment_statuses:list|None=None,
+		next_token:str|None=None,
+		amazon_order_ids:list|None=None,
+		actual_fulfillment_supply_source_id:str|None=None,
 		is_ispu:bool=False,
-		store_chain_store_id:str=None
+		store_chain_store_id:str|None=None
 	) -> object:
 		""" Returns orders created or updated during the time frame indicated by the specified parameters. You can also apply a range of filtering criteria to narrow the list of orders returned. If NextToken is present, that will be used to retrieve the orders instead of other criteria. """
 		data = dict(
@@ -226,7 +226,7 @@ class Orders(SPAPI):
 		append_to_base_uri = f"/{order_id}/address"
 		return self.make_request(append_to_base_uri=append_to_base_uri)
 
-	def get_order_items(self, order_id:str, next_token:str=None) -> object:
+	def get_order_items(self, order_id:str, next_token:str|None=None) -> object:
 		""" Returns detailed order item information for the order indicated by the specified order ID. If NextToken is provided, it's used to retrieve the next page of order items. """
 		append_to_base_uri = f"/{order_id}/orderItems"
 		data = dict(
@@ -234,7 +234,7 @@ class Orders(SPAPI):
 		)
 		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 	
-	def get_order_items_buyer_info(self, order_id:str, next_token:str=None) -> object:
+	def get_order_items_buyer_info(self, order_id:str, next_token:str|None=None) -> object:
 		""" Returns buyer information for the order items in the specified order. """
 		append_to_base_uri = f"/{order_id}/orderItems/buyerInfo"
 		data = dict(
