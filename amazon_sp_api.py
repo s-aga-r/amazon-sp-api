@@ -133,12 +133,16 @@ class SPAPI(object):
 	def get_headers(self) -> dict:
 		return {"x-amz-access-token": self.get_access_token()}
 
-	def make_request(self, append_to_base_uri:str="", data:dict={}, method:str="GET") -> object:
-		data = Util.remove_empty(data)
+	def make_request(self, method:str="GET", append_to_base_uri:str="", params:dict|None=None, data:dict|None=None) -> object:
+		if isinstance(params, dict):
+			params = Util.remove_empty(params)
+		if isinstance(data, dict):
+			data = Util.remove_empty(data)
+			
 		url = self.endpoint + self.BASE_URI + append_to_base_uri
 
 		try:
-			response = request(method=method, url=url, data=data, auth=self.get_auth(), headers=self.get_headers())
+			response = request(method=method, url=url, params=params, data=data, headers=self.get_headers(), auth=self.get_auth())
 			return response
 		except HTTPError as e:
 			error = SPAPIError(str(e))
@@ -205,7 +209,7 @@ class Orders(SPAPI):
 			marketplace_ids = [self.marketplace_id]
 			data["MarketplaceIds"] = marketplace_ids
 
-		return self.make_request(data=data)
+		return self.make_request(params=data)
 
 	def get_order(self, order_id:str) -> object:
 		""" Returns the order indicated by the specified order ID. """
@@ -228,7 +232,7 @@ class Orders(SPAPI):
 		data = dict(
 			NextToken=next_token
 		)
-		return self.make_request(append_to_base_uri=append_to_base_uri, data=data)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 	
 	def get_order_items_buyer_info(self, order_id:str, next_token:str=None) -> object:
 		""" Returns buyer information for the order items in the specified order. """
@@ -236,7 +240,7 @@ class Orders(SPAPI):
 		data = dict(
 			NextToken=next_token
 		)
-		return self.make_request(append_to_base_uri=append_to_base_uri, data=data)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 	
 	def update_shipment_status(self, order_id:str, marketplace_id:str, shipment_status:str, order_items:list[dict]) -> object:
 		""" Update the shipment status. """
@@ -250,7 +254,7 @@ class Orders(SPAPI):
 			"orderItems": order_items
 		}
 
-		return self.make_request(append_to_base_uri=append_to_base_uri, data=data, method="POST")
+		return self.make_request(method="POST", append_to_base_uri=append_to_base_uri, params=data)
 
 class ProductFees(SPAPI):
 	pass
