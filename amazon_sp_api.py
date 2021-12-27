@@ -225,7 +225,41 @@ class Finances(SPAPI):
 		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class FBAInventory(SPAPI):
-	pass
+	""" Amazon FBAInventory API """
+
+	BASE_URI = "/fba/inventory/v1/summaries"
+
+	def get_inventory_summaries(
+		self, 
+		granularity_id:str,
+		details:bool|None=None,
+		start_date_time:str|None=None,
+		seller_skus:list|None=None,
+		next_token:str|None=None,
+		marketplace_ids:list|None=None,
+	) -> object:
+		""" Returns a list of inventory summaries. The summaries returned depend on the presence or absence of the startDateTime and sellerSkus parameters:
+
+			> All inventory summaries with available details are returned when the startDateTime and sellerSkus parameters are omitted.
+			> When startDateTime is provided, the operation returns inventory summaries that have had changes after the date and time specified. The sellerSkus parameter is ignored.
+			> When the sellerSkus parameter is provided, the operation returns inventory summaries for only the specified sellerSkus. 
+		"""
+		data = dict(
+			granularityType="Marketplace",
+			granularityId=granularity_id,
+			details=details,
+			startDateTime=start_date_time,
+			nextToken=next_token,
+		)
+
+		self.list_to_dict("sellerSkus", seller_skus, data)
+		self.list_to_dict("marketplaceIds", marketplace_ids, data)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
+			data["MarketplaceIds"] = marketplace_ids
+
+		return self.make_request(params=data)
 
 class Orders(SPAPI):
 	""" Amazon Orders API """
