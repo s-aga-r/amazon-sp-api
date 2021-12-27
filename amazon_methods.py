@@ -49,4 +49,28 @@ def get_orders(created_after):
 
 	except Exception as e:
 		print(e)
+	
+def get_order_items(order_id):
+	try:
+		orders = get_orders_instance()
+		order_items_response = call_sp_api_method(
+			sp_api_method=orders.get_order_items,
+			order_id=order_id,
+		)
 		
+		print(order_items_response.text)
+
+	except Exception as e:
+		print(e)
+
+
+
+
+
+
+
+
+	
+
+
+	
