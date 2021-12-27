@@ -158,7 +158,71 @@ class Feeds(SPAPI):
 	pass
 
 class Finances(SPAPI):
-	pass
+	""" Amazon Finances API """
+
+	BASE_URI = "/finances/v0/"
+
+	def list_financial_event_groups(
+		self,
+		max_results:int|None=None,
+		started_before:str|None=None,
+		started_after:str|None=None,
+		next_token:str|None=None, 
+	) -> object:
+		""" Returns financial event groups for a given date range. """
+		append_to_base_uri = "financialEventGroups"
+		data = dict(
+			MaxResultsPerPage=max_results,
+			FinancialEventGroupStartedBefore=started_before,
+			FinancialEventGroupStartedAfter=started_after,
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
+
+	def list_financial_events_by_group_id(
+		self,
+		group_id:str,
+		max_results:int|None=None,
+		next_token:str|None=None
+	) -> object:
+		""" Returns all financial events for the specified financial event group. """
+		append_to_base_uri = f"financialEventGroups/{group_id}/financialEvents"
+		data = dict(
+			MaxResultsPerPage=max_results,
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
+
+	def list_financial_events_by_order_id(
+		self,
+		order_id:str,
+		max_results:int|None=None,
+		next_token:str|None=None
+	) -> object:
+		""" Returns all financial events for the specified order. """
+		append_to_base_uri = f"orders/{order_id}/financialEvents"
+		data = dict(
+			MaxResultsPerPage=max_results,
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
+
+	def list_financial_events(
+		self,
+		max_results:int|None=None,
+		posted_after:str|None=None,
+		posted_before:str|None=None,
+		next_token:str|None=None, 
+	) -> object:
+		""" Returns financial events for the specified data range. """
+		append_to_base_uri = f"financialEvents"
+		data = dict(
+			MaxResultsPerPage=max_results,
+			PostedAfter=posted_after,
+			PostedBefore=posted_before,
+			NextToken=next_token
+		)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class FBAInventory(SPAPI):
 	pass
