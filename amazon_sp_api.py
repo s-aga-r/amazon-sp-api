@@ -370,7 +370,44 @@ class Pricing(SPAPI):
 	pass
 
 class Reports(SPAPI):
-	pass
+	""" Amazon Reports API """
+
+	BASE_URI = "/reports/2021-06-30"
+
+	def get_reports(
+		self,
+		report_types:list|None=None,
+		processing_statuses:list|None=None,
+		marketplace_ids:list|None=None,
+		page_size:int|None=None,
+		created_since:str|None=None,
+		created_until:str|None=None,
+		next_token:str|None=None
+	) -> object:
+		""" Returns report details for the reports that match the filters that you specify. """
+		valid_processing_statuses = ["CANCELLED", "DONE", "FATAL", "IN_PROGRESS", "IN_QUEUE"]
+		if processing_statuses:
+			for processing_status in processing_statuses:
+				if processing_status.upper() not in valid_processing_statuses:
+					raise SPAPIError(f"Invalid Processing Status: {processing_status}, valid statuses are {', '.join(map(str, valid_processing_statuses))}.")
+
+		data = dict(
+			pageSize=page_size,
+			createdSince=created_since,
+			createdUntil=created_until,
+			nextToken=next_token
+		)
+
+		self.list_to_dict("reportTypes", report_types, data)
+		self.list_to_dict("processingStatuses", processing_statuses, data)
+		self.list_to_dict("marketplaceIds", marketplace_ids, data)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
+			data["marketplaceIds"] = marketplace_ids
+
+		append_to_base_uri = "/reports"
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class Sellers(SPAPI):
 	pass
