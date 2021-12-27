@@ -347,8 +347,9 @@ class Orders(SPAPI):
 	
 	def update_shipment_status(self, order_id:str, marketplace_id:str, shipment_status:str, order_items:list[dict]) -> object:
 		""" Update the shipment status. """
-		if shipment_status not in ["ReadyForPickup", "PickedUp", "RefusedPickup"]:
-			raise SPAPIError(f"Invalid Shipment Status: {shipment_status}.")
+		valid_shipment_statuses = ["ReadyForPickup", "PickedUp", "RefusedPickup"]
+		if shipment_status not in valid_shipment_statuses:
+			raise SPAPIError(f"Invalid Shipment Status: {shipment_status}, valid statuses are {', '.join(map(str, valid_shipment_statuses))}.")
 
 		append_to_base_uri = f"/{order_id}/shipment"
 		data = {
