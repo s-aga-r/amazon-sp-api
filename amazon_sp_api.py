@@ -234,9 +234,9 @@ class FBAInventory(SPAPI):
 		granularity_id:str,
 		details:bool|None=None,
 		start_date_time:str|None=None,
-		seller_skus:list|None=None,
+		seller_skus:list[str]|None=None,
 		next_token:str|None=None,
-		marketplace_ids:list|None=None,
+		marketplace_ids:list[str]|None=None,
 	) -> object:
 		""" Returns a list of inventory summaries. The summaries returned depend on the presence or absence of the startDateTime and sellerSkus parameters:
 
@@ -272,16 +272,16 @@ class Orders(SPAPI):
 		created_before:str|None=None,
 		last_updated_after:str|None=None,
 		last_updated_before:str|None=None,
-		order_statuses:list=[],
+		order_statuses:list[str]|None=None,
 		marketplace_ids:list|None=None,
-		fulfillment_channels:list=[],
-		payment_methods:object=[],
+		fulfillment_channels:list[str]|None=None,
+		payment_methods:list[str]|None=None,
 		buyer_email:str|None=None,
 		seller_order_id:str|None=None,
 		max_results:int=100,
-		easyship_shipment_statuses:list|None=None,
+		easyship_shipment_statuses:list[str]|None=None,
 		next_token:str|None=None,
-		amazon_order_ids:list|None=None,
+		amazon_order_ids:list[str]|None=None,
 		actual_fulfillment_supply_source_id:str|None=None,
 		is_ispu:bool=False,
 		store_chain_store_id:str|None=None
@@ -376,9 +376,9 @@ class Reports(SPAPI):
 
 	def get_reports(
 		self,
-		report_types:list|None=None,
-		processing_statuses:list|None=None,
-		marketplace_ids:list|None=None,
+		report_types:list[str]|None=None,
+		processing_statuses:list[str]|None=None,
+		marketplace_ids:list[str]|None=None,
 		page_size:int|None=None,
 		created_since:str|None=None,
 		created_until:str|None=None,
@@ -415,7 +415,7 @@ class Reports(SPAPI):
 		report_options:dict|None=None, 
 		data_start_time:str|None=None, 
 		data_end_time:str|None=None, 
-		marketplace_ids:list|None=None
+		marketplace_ids:list[str]|None=None
 	) -> object:
 		""" Creates a report. """
 		append_to_base_uri = "/reports"
@@ -444,7 +444,7 @@ class Reports(SPAPI):
 		append_to_base_uri = f"/reports/{report_id}"
 		return self.make_request(method="DELETE", append_to_base_uri=append_to_base_uri)
 	
-	def get_report_schedules(self, report_types:list) -> object:
+	def get_report_schedules(self, report_types:list[str]) -> object:
 		""" Returns report schedule details that match the filters that you specify. """
 		append_to_base_uri = "/schedules"
 		data = {}
@@ -455,7 +455,7 @@ class Reports(SPAPI):
 		self,
 		report_type:str,
 		period:str,
-		marketplace_ids:list|None=None,
+		marketplace_ids:list[str]|None=None,
 		report_options:dict|None=None,
 		next_report_creation_time:str|None=None
 	) -> object:
