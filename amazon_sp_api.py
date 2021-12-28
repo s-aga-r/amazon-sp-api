@@ -503,6 +503,11 @@ class Reports(SPAPI):
 		""" Returns report schedule details for the report schedule that you specify. """
 		append_to_base_uri = f"/schedules/{report_schedule_id}"
 		return self.make_request(append_to_base_uri=append_to_base_uri)
+	
+	def cancel_report_schedule(self, report_schedule_id:str) -> object:
+		""" Cancels the report schedule that you specify. """
+		append_to_base_uri = f"/schedules/{report_schedule_id}"
+		return self.make_request(method="DELETE", append_to_base_uri=append_to_base_uri)
 
 class Sellers(SPAPI):
 	pass
