@@ -436,6 +436,11 @@ class Reports(SPAPI):
 		""" Returns report details (including the reportDocumentId, if available) for the report that you specify. """
 		append_to_base_uri = f"/{report_id}"
 		return self.make_request(append_to_base_uri=append_to_base_uri)
+	
+	def cancel_report(self, report_id:str) -> object:
+		""" Cancels the report that you specify. Only reports with processingStatus=IN_QUEUE can be cancelled. Cancelled reports are returned in subsequent calls to the getReport and getReports operations. """
+		append_to_base_uri = f"/{report_id}"
+		return self.make_request(method="DELETE", append_to_base_uri=append_to_base_uri)
 
 class Sellers(SPAPI):
 	pass
