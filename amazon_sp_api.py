@@ -413,6 +413,43 @@ class CatalogItems(SPAPI):
 			data["marketplaceIds"] = marketplace_ids
 
 		return self.make_request(params=data)
+	
+	def get_catalog_item(
+		self, 
+		asin:str,
+		marketplace_ids:list[str]|None=None,
+		included_data:list[str]|None=None,
+		locale:str|None=None
+	) -> object:
+		""" Retrieves details for an item in the Amazon catalog. """
+		valid_included_data = [
+			"ATTRIBUTES",
+			"IDENTIFIERS",
+			"IMAGES",
+			"PRODUCTTYPES",
+			"SALESRANKS",
+			"SUMMARIES",
+			"VARIATIONS",
+			"VENDORDETAILS"
+		]
+		if included_data:
+			for item in included_data:
+				if item.upper() not in valid_included_data:
+					raise SPAPIError(f"Invalid Included Data: {item}, allowed data {', '.join(map(str, valid_included_data))}.")
+
+		append_to_base_uri = f"/{asin}"
+		data = dict(
+			locale=locale
+		)
+
+		self.list_to_dict("marketplaceIds", marketplace_ids, data)
+		self.list_to_dict("includedData", included_data, data)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
+			data["marketplaceIds"] = marketplace_ids
+
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class Pricing(SPAPI):
 	pass
