@@ -364,7 +364,56 @@ class ProductFees(SPAPI):
 	pass
 
 class CatalogItems(SPAPI):
-	pass
+	""" Amazon Catalog Items API """
+
+	BASE_URI = "/catalog/2020-12-01"
+
+	def search_catalog_items(
+		self, 
+		keywords:list[str],
+		marketplace_ids:list[str]|None=None,
+		included_data:list[str]|None=None,
+		brand_names:list[str]|None=None,
+		classification_ids:list[str]|None=None,
+		page_size:int|None=None,
+		page_token:str|None=None,
+		keywords_locale:str|None=None,
+		locale:str|None=None
+	) -> object:
+		""" Search for and return a list of Amazon catalog items and associated information. """
+		valid_included_data = [
+			"IDENTIFIERS",
+			"IMAGES",
+			"PRODUCTTYPES",
+			"SALESRANKS",
+			"SUMMARIES",
+			"VARIATIONS",
+			"VENDORDETAILS"
+		]
+		if included_data:
+			for item in included_data:
+				if item.upper() not in valid_included_data:
+					raise SPAPIError(f"Invalid Included Data: {item}, allowed data {', '.join(map(str, valid_included_data))}.")
+
+		append_to_base_uri = "/items"
+		data = dict(
+			pageSize=page_size,
+			pageToken=page_token,
+			keywordsLocale=keywords_locale,
+			locale=locale
+		)
+
+		self.list_to_dict("keywords", keywords, data)
+		self.list_to_dict("marketplaceIds", marketplace_ids, data)
+		self.list_to_dict("includedData", included_data, data)
+		self.list_to_dict("brandNames", brand_names, data)
+		self.list_to_dict("classificationIds", classification_ids, data)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
+			data["marketplaceIds"] = marketplace_ids
+
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class Pricing(SPAPI):
 	pass
