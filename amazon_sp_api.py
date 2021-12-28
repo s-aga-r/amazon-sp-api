@@ -499,6 +499,11 @@ class Reports(SPAPI):
 
 		return self.make_request(method="POST", append_to_base_uri=append_to_base_uri, data=data)
 
+	def get_report_schedule(self, report_schedule_id:str) -> object:
+		""" Returns report schedule details for the report schedule that you specify. """
+		append_to_base_uri = f"/schedules/{report_schedule_id}"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+
 class Sellers(SPAPI):
 	pass
 
