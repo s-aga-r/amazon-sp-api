@@ -358,7 +358,7 @@ class Orders(SPAPI):
 			"orderItems": order_items
 		}
 
-		return self.make_request(method="POST", append_to_base_uri=append_to_base_uri, params=data)
+		return self.make_request(method="POST", append_to_base_uri=append_to_base_uri, data=data)
 
 class ProductFees(SPAPI):
 	pass
@@ -450,6 +450,54 @@ class Reports(SPAPI):
 		data = {}
 		self.list_to_dict("reportTypes", report_types, data)
 		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
+	
+	def create_report_schedule(
+		self,
+		report_type:str,
+		period:str,
+		marketplace_ids:list|None=None,
+		report_options:dict|None=None,
+		next_report_creation_time:str|None=None
+	) -> object:
+		""" Creates a report schedule. If a report schedule with the same report type and marketplace IDs already exists, it will be cancelled and replaced with this one. """
+		valid_periods = [
+			"PT5M",
+			"PT15M",
+			"PT30M",
+			"PT1H",
+			"PT2H",
+			"PT4H",
+			"PT8H",
+			"PT12H",
+			"P1D",
+			"P2D",
+			"P3D",
+			"PT84H",
+			"P7D",
+			"P14D",
+			"P15D",
+			"P18D",
+			"P30D",
+			"P1M",
+		]
+		if period not in valid_periods:
+			raise SPAPIError(f"Invalid Period: {period}, valid periods are {', '.join(map(str, valid_periods))}.")
+
+		append_to_base_uri = "/schedules"
+		data = dict(
+			reportType=report_type,
+			reportOptions=report_options,
+			period=period,
+			nextReportCreationTime=next_report_creation_time,
+		)
+
+		self.list_to_dict("marketplaceIds", marketplace_ids, data)
+
+		if not marketplace_ids:
+			marketplace_ids = [self.marketplace_id]
+			data["marketplaceIds"] = marketplace_ids
+
+		return self.make_request(method="POST", append_to_base_uri=append_to_base_uri, data=data)
 
 class Sellers(SPAPI):
 	pass
