@@ -515,7 +515,13 @@ class Reports(SPAPI):
 		return self.make_request(append_to_base_uri=append_to_base_uri)
 
 class Sellers(SPAPI):
-	pass
+	""" Amazon Sellers API """
+
+	BASE_URI = "/sellers/v1/marketplaceParticipations"
+
+	def get_marketplace_participations(self) -> object:
+		""" Returns a list of marketplaces that the seller submitting the request can sell in and information about the seller's participation in those marketplaces. """
+		return self.make_request()
 
 class Util:
 	@staticmethod
