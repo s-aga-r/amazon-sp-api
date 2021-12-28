@@ -432,6 +432,11 @@ class Reports(SPAPI):
 		
 		return self.make_request(method="POST", data=data)
 
+	def get_report(self, report_id:str) -> object:
+		""" Returns report details (including the reportDocumentId, if available) for the report that you specify. """
+		append_to_base_uri = f"/{report_id}"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+
 class Sellers(SPAPI):
 	pass
 
