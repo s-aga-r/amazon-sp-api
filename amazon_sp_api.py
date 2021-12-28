@@ -366,7 +366,7 @@ class ProductFees(SPAPI):
 class CatalogItems(SPAPI):
 	""" Amazon Catalog Items API """
 
-	BASE_URI = "/catalog/2020-12-01"
+	BASE_URI = "/catalog/2020-12-01/items"
 
 	def search_catalog_items(
 		self, 
@@ -395,7 +395,6 @@ class CatalogItems(SPAPI):
 				if item.upper() not in valid_included_data:
 					raise SPAPIError(f"Invalid Included Data: {item}, allowed data {', '.join(map(str, valid_included_data))}.")
 
-		append_to_base_uri = "/items"
 		data = dict(
 			pageSize=page_size,
 			pageToken=page_token,
@@ -413,7 +412,7 @@ class CatalogItems(SPAPI):
 			marketplace_ids = [self.marketplace_id]
 			data["marketplaceIds"] = marketplace_ids
 
-		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
+		return self.make_request(params=data)
 
 class Pricing(SPAPI):
 	pass
