@@ -443,6 +443,13 @@ class Reports(SPAPI):
 		""" Cancels the report that you specify. Only reports with processingStatus=IN_QUEUE can be cancelled. Cancelled reports are returned in subsequent calls to the getReport and getReports operations. """
 		append_to_base_uri = f"/reports/{report_id}"
 		return self.make_request(method="DELETE", append_to_base_uri=append_to_base_uri)
+	
+	def get_report_schedules(self, report_types:list) -> object:
+		""" Returns report schedule details that match the filters that you specify. """
+		append_to_base_uri = "/schedules"
+		data = {}
+		self.list_to_dict("reportTypes", report_types, data)
+		return self.make_request(append_to_base_uri=append_to_base_uri, params=data)
 
 class Sellers(SPAPI):
 	pass
