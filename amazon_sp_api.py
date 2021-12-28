@@ -509,6 +509,11 @@ class Reports(SPAPI):
 		append_to_base_uri = f"/schedules/{report_schedule_id}"
 		return self.make_request(method="DELETE", append_to_base_uri=append_to_base_uri)
 
+	def get_report_document(self, report_document_id:str) -> object:
+		""" Returns the information required for retrieving a report document's contents. """
+		append_to_base_uri = f"/documents/{report_document_id}"
+		return self.make_request(append_to_base_uri=append_to_base_uri)
+
 class Sellers(SPAPI):
 	pass
 
