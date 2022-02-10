@@ -1,5 +1,4 @@
 # https://sellercentral.amazon.in/marketplacedeveloper/applications
-APP_ID = "amzn1.sp.solution.61c1fd0c-927f-4e1e-87b1-************"
 IAM_ARN = "arn:aws:iam::187442139888:**************"
 CLIENT_ID = "amzn1.application-oa2-client.********************************"
 CLIENT_SECRET = "10c8c4cfbd5eb5247b08465a2eef6657911*****************************"
